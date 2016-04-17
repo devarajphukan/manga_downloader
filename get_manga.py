@@ -22,8 +22,22 @@ def get_name() :
 def crawl() :
 
 	name_dic = get_name()
-	for i in range(1,len(name_dic.keys())) :
-		print str(i)+" : "+str(name_dic[i])
+	alpha = str(raw_input("Enter 1st alphabet of Manga Name or 0 for others : ")).lower()
+	temp_dic = {}
+	ctr = 1
+	if alpha == '0' :
+		for i in name_dic.values() :
+			if ord(i[0]) < 97 or ord(i[0]) > 122 :
+				temp_dic[ctr] = i
+				ctr += 1
+	else :
+		for i in name_dic.values() :
+			if ord(i[0]) == ord(alpha) :
+				temp_dic[ctr] = i
+				ctr += 1	 
+
+	for i in range(1,len(temp_dic.keys())) :
+		print str(i)+" : "+str(temp_dic[i])
 	print "\n"	
 	mnga = raw_input("Enter Manga No. : ")
 	print "\n"

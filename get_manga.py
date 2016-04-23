@@ -2,27 +2,31 @@ from bs4 import BeautifulSoup
 import requests 
 import os
 
-def get_name() :
-	page = requests.get("http://www.mangapanda.com/alphabetical").text
-	soup = BeautifulSoup(page,"lxml")
+# def get_name() :
+# 	page = requests.get("http://www.mangapanda.com/alphabetical").text
+# 	soup = BeautifulSoup(page,"lxml")
 
-	ul_li = soup.find_all("ul",{"class":"series_alpha"})
+# 	ul_li = soup.find_all("ul",{"class":"series_alpha"})
 
-	name_dic = {}
-	countr = 1
-	for ul in ul_li :
-		names = ul.find_all("li")
-		for name in names :
-			n = name.find("a").get("href")
-			name_dic[countr] = str(n).strip().replace("/","")
-			countr += 1
+# 	name_dic = {}
+# 	countr = 1
+# 	for ul in ul_li :
+# 		names = ul.find_all("li")
+# 		for name in names :
+# 			n = name.find("a").get("href")
+# 			name_dic[countr] = str(n).strip().replace("/","")
+# 			countr += 1
 
-	return name_dic
+# 	return name_dic
 
 def crawl() :
+	
+	f = open('names.json').read()
+	name_dic = eval(f)
+	# name_dic = get_name()
 
-	name_dic = get_name()
 	alpha = str(raw_input("Enter 1st alphabet of Manga Name or 0 for others : ")).lower()
+
 	temp_dic = {}
 	ctr = 1
 	if alpha == '0' :
@@ -38,12 +42,13 @@ def crawl() :
 
 	for i in range(1,len(temp_dic.keys())) :
 		print str(i)+" : "+str(temp_dic[i])
+	
 	print "\n"	
 	mnga = raw_input("Enter Manga No. : ")
 	print "\n"
-	print "Getting manga... " + name_dic[int(mnga)] + "\n"
+	print "Getting manga... " + temp_dic[int(mnga)] + "\n"
 
-	url_temp = "http://mangapanda.com/" + name_dic[int(mnga)]
+	url_temp = "http://mangapanda.com/" + temp_dic[int(mnga)]
 	t = requests.get(url_temp).text	
 	s = BeautifulSoup(t,"lxml")
 	tbl_li = s.find('table',{'id':'listing'}).find_all("a")
@@ -55,7 +60,7 @@ def crawl() :
 
 	for c in range(strt,end+1) :
 		
-		dir_path = name_dic[int(mnga)] + "/" + str(c)
+		dir_path = temp_dic[int(mnga)] + "/" + str(c)
 		os.system("mkdir -p "+dir_path)
 		
 		for chpt in range(1,100000) :
@@ -67,4 +72,5 @@ def crawl() :
 				soup = BeautifulSoup(page.text,"lxml")
 				img_url = soup.find("div",{"id":"imgholder"}).find("a").find("img").get("src")
 				os.system("wget "+str(img_url)+" -O "+dir_path+"/"+str(chpt))
+
 crawl()

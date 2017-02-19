@@ -57,13 +57,15 @@ def get_mangas(start, end, mangaName):
             else:
                 soup = BeautifulSoup(page.text, "lxml")
                 img_url = soup.find("div", {"id": "imgholder"}).find("a").find("img").get("src")
-                os.system("wget " + str(img_url) + " -O " + dir_path + "/" + str(chpt))
+                # os.system("wget " + str(img_url) + " -O " + dir_path + "/" + str(chpt))
 
-                # r = requests.get(settings.STATICMAP_URL.format(**data), stream=True)
-                # if r.status_code == 200:
-                #     with open(path, 'wb') as f:
-                #         for chunk in r:
-                #             f.write(chunk)
+                path = dir_path + "/" + str(chpt)
+
+                r = requests.get(img_url, stream=True)
+                if r.status_code == 200:
+                    with open(path, 'wb') as f:
+                        for chunk in r:
+                            f.write(chunk)
 
 def proxy_get_chapters():
     text2.delete(1.0,END)
